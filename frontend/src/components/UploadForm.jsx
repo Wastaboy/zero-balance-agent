@@ -1,12 +1,6 @@
 import { useState, useRef } from 'react'
 import { evaluateFile } from '../api'
 
-const STEPS = [
-  { icon: '📂', title: 'Upload your file', desc: 'Choose a CSV or Excel file containing your zero-balance account data.' },
-  { icon: '⚙️', title: 'System evaluates each account', desc: 'Each account is scored against 5 criteria — balance duration, last activity, customer relationships, account age, and reason for opening.' },
-  { icon: '📊', title: 'Review the results', desc: 'Every account gets a clear recommendation: Keep Open, Close, or Needs Review — with a plain-English explanation.' },
-]
-
 const REQUIRED_COLUMNS = [
   { col: 'account_id',           desc: 'A unique code for each account' },
   { col: 'rim_number',           desc: 'The customer identifier (links accounts belonging to the same person)' },
@@ -21,7 +15,6 @@ export default function UploadForm({ onComplete }) {
   const [file, setFile]         = useState(null)
   const [loading, setLoading]   = useState(false)
   const [error, setError]       = useState(null)
-  const [showGuide, setShowGuide] = useState(false)
   const inputRef = useRef()
 
   const handleDrop = (e) => {
@@ -61,19 +54,6 @@ export default function UploadForm({ onComplete }) {
           Upload your account data and get a clear, explainable recommendation for each account —
           no guesswork, no black boxes.
         </p>
-      </div>
-
-      {/* How it works */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-        {STEPS.map((s, i) => (
-          <div key={i} className="bg-white rounded-2xl border p-5 shadow-sm text-center">
-            <div className="text-3xl mb-2">{s.icon}</div>
-            <p className="font-semibold text-gray-800 text-sm mb-1">
-              <span className="text-gray-400 mr-1">Step {i + 1}.</span>{s.title}
-            </p>
-            <p className="text-xs text-gray-500 leading-relaxed">{s.desc}</p>
-          </div>
-        ))}
       </div>
 
       {/* Upload area */}
@@ -137,38 +117,6 @@ export default function UploadForm({ onComplete }) {
             'Run Evaluation →'
           )}
         </button>
-      </div>
-
-      {/* File format guide */}
-      <div className="mt-6 bg-white rounded-2xl border shadow-sm overflow-hidden">
-        <button
-          onClick={() => setShowGuide(!showGuide)}
-          className="w-full flex items-center justify-between px-6 py-4 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
-        >
-          <span>📋 What columns does my file need?</span>
-          <span className="text-gray-400">{showGuide ? '▲' : '▼'}</span>
-        </button>
-
-        {showGuide && (
-          <div className="px-6 pb-6 border-t">
-            <p className="text-sm text-gray-500 mt-4 mb-4">
-              Your file must include these columns. Column names are not case-sensitive and spaces are ignored.
-            </p>
-            <div className="space-y-2">
-              {REQUIRED_COLUMNS.map((c) => (
-                <div key={c.col} className="flex items-start gap-3 text-sm">
-                  <code className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs font-mono flex-shrink-0 mt-0.5">
-                    {c.col}
-                  </code>
-                  <span className="text-gray-600">{c.desc}</span>
-                </div>
-              ))}
-            </div>
-            <p className="text-xs text-gray-400 mt-4">
-              Optional columns: <code className="bg-gray-100 px-1 rounded">account_open_reason</code> and <code className="bg-gray-100 px-1 rounded">other_active_products</code>
-            </p>
-          </div>
-        )}
       </div>
 
     </div>
