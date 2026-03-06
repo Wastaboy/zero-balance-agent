@@ -1,0 +1,47 @@
+criteria:
+  zero_balance_days:
+    description: "Number of days the account balance has been zero"
+    weight: 0.30
+    thresholds:
+      low_risk: 90
+      high_risk: 365
+
+  last_activity_days:
+    description: "Days since the last debit or credit transaction"
+    weight: 0.25
+    thresholds:
+      active: 90
+      dormant: 180
+
+  has_other_products:
+    description: "Whether the customer (RIM) holds other active accounts or products"
+    weight: 0.25
+    keep_if_true: true
+
+  account_age_days:
+    description: "Total age of the account since opening"
+    weight: 0.10
+    thresholds:
+      new_account: 90
+      established: 365
+
+  account_open_reason:
+    description: "The reason the account was originally opened"
+    weight: 0.10
+    protected_reasons:
+      - "salary_account"
+      - "regulatory"
+      - "product_bundle"
+      - "government_benefit"
+
+decision_thresholds:
+  keep_below: 0.40
+  close_above: 0.70
+
+hard_overrides:
+  - condition: "account_age_days < new_account"
+    action: "KEEP"
+    reason: "Account is too new to evaluate"
+  - condition: "has_other_products == true AND zero_balance_days < 365"
+    action: "KEEP"
+    reason: "Active cross-product relationship under same RIM"
